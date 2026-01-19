@@ -16,6 +16,7 @@ import { BOQTable } from "@/components/BOQTable";
 import { StatCard } from "@/components/StatCard";
 import { ChecklistSection } from "@/components/ChecklistSection";
 import { Button } from "@/components/ui/button";
+import uniteSolarLogo from "@/assets/unite-solar-logo.jpeg";
 
 const Index = () => {
   const handlePrint = () => {
@@ -24,22 +25,15 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="solar-gradient py-12 px-6 print:py-6 print:bg-primary">
+      <header className="solar-gradient py-8 px-6 print:py-6 print:bg-primary">
         <div className="container max-w-6xl mx-auto">
-          <div className="flex items-center justify-between gap-4 animate-fade-in">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-primary-foreground/20 rounded-xl backdrop-blur-sm print:bg-transparent">
-                <Sun className="w-8 h-8 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground">
-                  Solar Power Plant BOQ
-                </h1>
-                <p className="text-primary-foreground/80 mt-1">
-                  Bill of Quantities — 550 kW Commercial Installation
-                </p>
-              </div>
-            </div>
+          {/* Logo and Export Button Row */}
+          <div className="flex items-center justify-between mb-6 animate-fade-in">
+            <img 
+              src={uniteSolarLogo} 
+              alt="Unite Solar Logo" 
+              className="h-12 md:h-16 object-contain bg-white rounded-lg px-3 py-1"
+            />
             <Button
               onClick={handlePrint}
               variant="secondary"
@@ -48,6 +42,22 @@ const Index = () => {
               <Printer className="w-4 h-4" />
               <span className="hidden sm:inline">Export PDF</span>
             </Button>
+          </div>
+          
+          {/* Title and Client Info */}
+          <div className="animate-fade-in">
+            <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground">
+              Solar Power Plant BOQ
+            </h1>
+            <p className="text-primary-foreground/80 mt-1">
+              Bill of Quantities — 550 kW Commercial Installation
+            </p>
+            <div className="mt-4 p-3 bg-primary-foreground/10 rounded-lg backdrop-blur-sm inline-block">
+              <p className="text-sm text-primary-foreground/70">Client</p>
+              <p className="font-semibold text-primary-foreground">
+                Kishore Exports, Martur, Ongole Dist., Andhra Pradesh
+              </p>
+            </div>
           </div>
         </div>
       </header>
