@@ -8,31 +8,46 @@ import {
   LayoutGrid,
   Calculator,
   Leaf,
-  Battery
+  Battery,
+  Printer
 } from "lucide-react";
 import { BOQSection } from "@/components/BOQSection";
 import { BOQTable } from "@/components/BOQTable";
 import { StatCard } from "@/components/StatCard";
 import { ChecklistSection } from "@/components/ChecklistSection";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
+  const handlePrint = () => {
+    window.print();
+  };
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="solar-gradient py-12 px-6">
+      <header className="solar-gradient py-12 px-6 print:py-6 print:bg-primary">
         <div className="container max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-4 animate-fade-in">
-            <div className="p-3 bg-primary-foreground/20 rounded-xl backdrop-blur-sm">
-              <Sun className="w-8 h-8 text-primary-foreground" />
+          <div className="flex items-center justify-between gap-4 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-primary-foreground/20 rounded-xl backdrop-blur-sm print:bg-transparent">
+                <Sun className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground">
+                  Solar Power Plant BOQ
+                </h1>
+                <p className="text-primary-foreground/80 mt-1">
+                  Bill of Quantities — 550 kW Commercial Installation
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground">
-                Solar Power Plant BOQ
-              </h1>
-              <p className="text-primary-foreground/80 mt-1">
-                Bill of Quantities — 550 kW Commercial Installation
-              </p>
-            </div>
+            <Button
+              onClick={handlePrint}
+              variant="secondary"
+              className="print:hidden gap-2 bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground border-0"
+            >
+              <Printer className="w-4 h-4" />
+              <span className="hidden sm:inline">Export PDF</span>
+            </Button>
           </div>
         </div>
       </header>
