@@ -9,7 +9,14 @@ import {
   Calculator,
   Leaf,
   Battery,
-  Printer
+  Printer,
+  FileText,
+  PenTool,
+  BarChart3,
+  Ruler,
+  Settings,
+  Table2,
+  Box
 } from "lucide-react";
 import { BOQSection } from "@/components/BOQSection";
 import { BOQTable } from "@/components/BOQTable";
@@ -236,6 +243,103 @@ const Index = () => {
             "O&M Manual + As-Built Drawings",
           ]}
         />
+
+        {/* Section 7: Engineering Deliverables */}
+        <BOQSection
+          title="7. Engineering Deliverables"
+          icon={FileText}
+          className="animate-slide-up"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* AutoCAD / Civil 3D */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <PenTool className="w-5 h-5 text-primary" />
+                <h4 className="font-semibold text-foreground">AutoCAD / Civil 3D</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Site layout</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Array layout</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Earthing layout</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>DC cable layout</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Equipment layout</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Stringing layout</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Table numbering</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Structure fabrication drawings</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>DWG files</li>
+              </ul>
+            </div>
+
+            {/* PVsyst */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <BarChart3 className="w-5 h-5 text-success" />
+                <h4 className="font-semibold text-foreground">PVsyst</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-success rounded-full"></span>PVsyst simulation report</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-success rounded-full"></span>Energy generation</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-success rounded-full"></span>Loss analysis</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-success rounded-full"></span>String configuration validation</li>
+              </ul>
+            </div>
+
+            {/* STAAD Pro */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <Ruler className="w-5 h-5 text-accent" />
+                <h4 className="font-semibold text-foreground">STAAD Pro</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-accent rounded-full"></span>Ground mount structure design</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-accent rounded-full"></span>Structural analysis</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-accent rounded-full"></span>Wind load, seismic load</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-accent rounded-full"></span>Foundation forces</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-accent rounded-full"></span>Structure calculation report</li>
+              </ul>
+            </div>
+
+            {/* ETAP / EPLAN / Caneco BT */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <Settings className="w-5 h-5 text-warning" />
+                <h4 className="font-semibold text-foreground">ETAP / EPLAN / Caneco BT</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-warning rounded-full"></span>LT panel sizing</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-warning rounded-full"></span>Cable sizing</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-warning rounded-full"></span>Protection coordination</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-warning rounded-full"></span>Single Line Diagram (SLD)</li>
+              </ul>
+            </div>
+
+            {/* Excel */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <Table2 className="w-5 h-5 text-primary" />
+                <h4 className="font-semibold text-foreground">Excel</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Complete BOQ</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Cable schedules</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Equipment schedules</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Costing</li>
+              </ul>
+            </div>
+
+            {/* SketchUp / Revit */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <Box className="w-5 h-5 text-success" />
+                <h4 className="font-semibold text-foreground">SketchUp / Revit (Optional)</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-success rounded-full"></span>3D plant visualization</li>
+                <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-success rounded-full"></span>Walkthroughs</li>
+              </ul>
+            </div>
+          </div>
+        </BOQSection>
 
         {/* Module Calculation Note */}
         <div className="bg-muted/50 rounded-lg p-6 border border-border animate-slide-up">
