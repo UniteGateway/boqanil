@@ -1,0 +1,508 @@
+import {
+  Sun,
+  Zap,
+  Cable,
+  Gauge,
+  Building,
+  Wrench,
+  LayoutGrid,
+  Calculator,
+  Leaf,
+  Printer,
+  FileText,
+  PenTool,
+  BarChart3,
+  Ruler,
+  Settings,
+  Table2,
+  Box,
+  ArrowLeft,
+} from "lucide-react";
+import { BOQSection } from "@/components/BOQSection";
+import { BOQTable } from "@/components/BOQTable";
+import { StatCard } from "@/components/StatCard";
+import { ChecklistSection } from "@/components/ChecklistSection";
+import { Button } from "@/components/ui/button";
+import uniteSolarLogo from "@/assets/unite-solar-logo.jpeg";
+import { BOQData } from "@/types/boq";
+
+interface BOQDocumentProps {
+  data: BOQData;
+  onBack: () => void;
+}
+
+export const BOQDocument = ({ data, onBack }: BOQDocumentProps) => {
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const totalModules = Math.ceil((data.totalCapacity * 1000) / data.moduleWattage);
+  const configSummary = data.systemSplits.map((s) => `${s.capacity}kW`).join(" + ");
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="solar-gradient py-8 px-6 print:py-6 print:bg-primary">
+        <div className="container max-w-6xl mx-auto">
+          {/* Logo and Export Button Row */}
+          <div className="flex items-center justify-between mb-6 animate-fade-in">
+            <div className="flex items-center gap-4">
+              <Button
+                onClick={onBack}
+                variant="ghost"
+                className="print:hidden text-primary-foreground hover:bg-primary-foreground/20"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Edit
+              </Button>
+              <img
+                src={uniteSolarLogo}
+                alt="Unite Solar Logo"
+                className="h-12 md:h-16 object-contain bg-white rounded-lg px-3 py-1"
+              />
+            </div>
+            <Button
+              onClick={handlePrint}
+              variant="secondary"
+              className="print:hidden gap-2 bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground border-0"
+            >
+              <Printer className="w-4 h-4" />
+              <span className="hidden sm:inline">Export PDF</span>
+            </Button>
+          </div>
+
+          {/* Title and Client Info */}
+          <div className="animate-fade-in">
+            <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground">
+              Solar Power Plant BOQ
+            </h1>
+            <p className="text-primary-foreground/80 mt-1">
+              Bill of Quantities — {data.totalCapacity} kW Commercial Installation
+            </p>
+            <div className="mt-4 p-3 bg-primary-foreground/10 rounded-lg backdrop-blur-sm inline-block">
+              <p className="text-sm text-primary-foreground/70">Client</p>
+              <p className="font-semibold text-primary-foreground">
+                {data.clientName}, {data.location}
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Project Summary Stats */}
+      <div className="container max-w-6xl mx-auto px-6 -mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-slide-up">
+          <StatCard
+            label="Total Capacity"
+            value={`${data.totalCapacity} kW`}
+            subValue="DC Power"
+            icon={Zap}
+          />
+          <StatCard
+            label="Module Type"
+            value={`${data.moduleWattage} Wp`}
+            subValue={data.moduleType}
+            icon={LayoutGrid}
+          />
+          <StatCard
+            label="Total Modules"
+            value={totalModules.toString()}
+            subValue="Nos (approx)"
+            icon={Calculator}
+          />
+          <StatCard
+            label="Configuration"
+            value={`${data.systemSplits.length}-Split`}
+            subValue={configSummary}
+            icon={Zap}
+          />
+        </div>
+      </div>
+
+      {/* System Split Info */}
+      <div className="container max-w-6xl mx-auto px-6 mt-8">
+        <div className="bg-card rounded-lg card-elevated p-6 animate-slide-up stagger-1">
+          <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Leaf className="w-5 h-5 text-success" />
+            System Configuration Split
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {data.systemSplits.map((split, index) => (
+              <div
+                key={index}
+                className={`bg-muted rounded-lg p-4 border-l-4 ${
+                  split.meteringType === "Zero Export" ? "border-accent" : "border-primary"
+                }`}
+              >
+                <p className="text-sm text-muted-foreground">{split.type}</p>
+                <p className="text-xl font-bold text-foreground">{split.capacity} kW</p>
+                <span
+                  className={`inline-block mt-2 text-xs font-medium px-2 py-1 rounded-full ${
+                    split.meteringType === "Zero Export"
+                      ? "bg-accent/20 text-accent-foreground"
+                      : "bg-success/10 text-success"
+                  }`}
+                >
+                  {split.meteringType}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main BOQ Sections */}
+      <main className="container max-w-6xl mx-auto px-6 py-10 space-y-8">
+        {/* Section 1: PV Modules & Mounting */}
+        <BOQSection
+          title="1. PV Modules & Mounting"
+          icon={LayoutGrid}
+          className="animate-slide-up stagger-2"
+        >
+          <BOQTable
+            headers={["Item", "Specifications", "Qty / Unit"]}
+            rows={[
+              {
+                item: "PV Modules",
+                specification: `${data.moduleWattage} Wp ${data.moduleType}`,
+                quantity: `${totalModules} Nos`,
+              },
+              ...data.systemSplits.map((split) => ({
+                item: `Module Mounting – ${split.type}`,
+                specification: split.type.toLowerCase().includes("rooftop")
+                  ? "HDG/Aluminium"
+                  : "HDG Ground Structure",
+                quantity: `~${split.capacity} kW`,
+              })),
+              {
+                item: "String Combiners DC",
+                specification: "16 Strings / 1 Out",
+                quantity: `~${data.stringCombiners} Nos`,
+              },
+            ]}
+          />
+        </BOQSection>
+
+        {/* Section 2: Inverters & Power Conversion */}
+        <BOQSection
+          title="2. Inverters & Power Conversion"
+          icon={Zap}
+          className="animate-slide-up stagger-3"
+        >
+          <BOQTable
+            headers={["Item", "Rating", "Qty"]}
+            rows={[
+              ...data.inverters.map((inv) => ({
+                item: inv.type,
+                specification: `${inv.rating} kW`,
+                quantity: `${inv.quantity} ${inv.quantity === 1 ? "No" : "Nos"}`,
+              })),
+              {
+                item: "Zero Export Controller / EMS",
+                specification: "Utility Grade",
+                quantity: "1 Set",
+              },
+            ]}
+          />
+          <p className="text-sm text-muted-foreground mt-4 italic">
+            * String inverters are chosen to match ~25–30% higher DC than AC for bifacial yield
+            optimization.
+          </p>
+        </BOQSection>
+
+        {/* Section 3: Electrical BOS */}
+        <BOQSection
+          title="3. Electrical Balance of System (BOS)"
+          icon={Cable}
+          className="animate-slide-up stagger-4"
+        >
+          <BOQTable
+            headers={["Item", "Description"]}
+            rows={[
+              { item: "DC Cables", specification: data.dcCableSpec },
+              {
+                item: "AC Cables",
+                specification: `${data.acCableSpec} for inverter to LT Panel`,
+              },
+              {
+                item: `Main AC Cables (${data.cableTrenchLength} m)`,
+                specification: data.mainAcCableSpec,
+              },
+              { item: "DC Disconnects", specification: "Per inverter string division" },
+              {
+                item: "LT Panel with Protections",
+                specification: "Net Metering & Zero Export Panels",
+              },
+              {
+                item: "Earthing System",
+                specification: `${data.earthingPoints}+ DDR with Chemical Earthing`,
+              },
+              {
+                item: "Lightning Arrestors (LA)",
+                specification: `ESE Type – ${data.lightningArrestors} Nos`,
+              },
+              { item: "Cable Trays & Conduits", specification: "GI Cable Trays + RCC Trench" },
+            ]}
+          />
+        </BOQSection>
+
+        {/* Section 4: Net Metering & Zero Export */}
+        <BOQSection
+          title="4. Net Metering & Zero Export Compliance"
+          icon={Gauge}
+          className="animate-slide-up stagger-5"
+        >
+          <BOQTable
+            headers={["Item", "Qty"]}
+            rows={[
+              { item: "Bi-Directional Net Meter", quantity: "1 Set" },
+              { item: "Synchronization Panel", quantity: "1 Set" },
+              { item: "Zero Export Meter + Limit Controller", quantity: "1 Set" },
+              { item: "Remote Monitoring (Plant + Inverters + EMS)", quantity: "1 System" },
+            ]}
+          />
+        </BOQSection>
+
+        {/* Section 5: Civil & Site Work */}
+        <BOQSection
+          title="5. Civil & Site Work"
+          icon={Building}
+          className="animate-slide-up stagger-6"
+        >
+          <BOQTable
+            headers={["Item", "Details"]}
+            rows={[
+              { item: "Ground Structure Foundation", specification: "RCC Pedestal / Micro Pile" },
+              { item: "Solar Yard Fencing", specification: "Per site boundary" },
+              { item: "Inverter / Control Room", specification: "1 No (if required)" },
+              {
+                item: "Cable Duct / Trench",
+                specification: `${data.cableTrenchLength} mts Covered`,
+              },
+            ]}
+          />
+        </BOQSection>
+
+        {/* Section 6: Installation & Project Execution */}
+        <ChecklistSection
+          title="6. Installation & Project Execution"
+          icon={Wrench}
+          className="animate-slide-up"
+          items={[
+            "Site Mobilization",
+            "Module & BOS Installation",
+            "Cable Laying & Termination",
+            "Earthing & Lightning Protection",
+            "Panel / Inverter Wiring",
+            "Net Metering & Zero Export Commissioning",
+            "Testing, Commissioning & Handover",
+            "O&M Manual + As-Built Drawings",
+          ]}
+        />
+
+        {/* Section 7: Engineering Deliverables */}
+        <BOQSection
+          title="7. Engineering Deliverables"
+          icon={FileText}
+          className="animate-slide-up"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* AutoCAD / Civil 3D */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <PenTool className="w-5 h-5 text-primary" />
+                <h4 className="font-semibold text-foreground">AutoCAD / Civil 3D</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Site layout
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Array layout
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Earthing layout
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>DC cable layout
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Equipment layout
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Stringing layout
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Table numbering
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Structure
+                  fabrication drawings
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>DWG files
+                </li>
+              </ul>
+            </div>
+
+            {/* PVsyst */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <BarChart3 className="w-5 h-5 text-success" />
+                <h4 className="font-semibold text-foreground">PVsyst</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-success rounded-full"></span>PVsyst simulation
+                  report
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-success rounded-full"></span>Energy generation
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-success rounded-full"></span>Loss analysis
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-success rounded-full"></span>String
+                  configuration validation
+                </li>
+              </ul>
+            </div>
+
+            {/* STAAD Pro */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <Ruler className="w-5 h-5 text-accent" />
+                <h4 className="font-semibold text-foreground">STAAD Pro</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>Ground mount
+                  structure design
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>Structural analysis
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>Wind load, seismic
+                  load
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>Foundation forces
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>Structure calculation
+                  report
+                </li>
+              </ul>
+            </div>
+
+            {/* ETAP / EPLAN / Caneco BT */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <Settings className="w-5 h-5 text-warning" />
+                <h4 className="font-semibold text-foreground">ETAP / EPLAN / Caneco BT</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-warning rounded-full"></span>LT panel sizing
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-warning rounded-full"></span>Cable sizing
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-warning rounded-full"></span>Protection
+                  coordination
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-warning rounded-full"></span>Single Line Diagram
+                  (SLD)
+                </li>
+              </ul>
+            </div>
+
+            {/* Excel */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <Table2 className="w-5 h-5 text-primary" />
+                <h4 className="font-semibold text-foreground">Excel</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Complete BOQ
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Cable schedules
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Equipment schedules
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>Costing
+                </li>
+              </ul>
+            </div>
+
+            {/* SketchUp / Revit */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <Box className="w-5 h-5 text-success" />
+                <h4 className="font-semibold text-foreground">SketchUp / Revit (Optional)</h4>
+              </div>
+              <ul className="space-y-1.5 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-success rounded-full"></span>3D plant
+                  visualization
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-success rounded-full"></span>Walkthroughs
+                </li>
+              </ul>
+            </div>
+          </div>
+        </BOQSection>
+
+        {/* Module Calculation Note */}
+        <div className="bg-muted/50 rounded-lg p-6 border border-border animate-slide-up">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+            <Calculator className="w-5 h-5 text-primary" />
+            Module Count Calculation
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div>
+              <p className="text-muted-foreground">Total DC Capacity</p>
+              <p className="font-mono font-semibold text-foreground">{data.totalCapacity} kW</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Module Size</p>
+              <p className="font-mono font-semibold text-foreground">{data.moduleWattage} Wp</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Modules Required</p>
+              <p className="font-mono font-semibold text-foreground">
+                {(data.totalCapacity * 1000).toLocaleString()} / {data.moduleWattage} ≈{" "}
+                {totalModules} Nos
+              </p>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-4">
+            * You can adjust rounding depending on string configuration (string size and inverter
+            ratio).
+          </p>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-card border-t border-border py-8 px-6 mt-10">
+        <div className="container max-w-6xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-2 text-muted-foreground">
+            <Sun className="w-5 h-5 text-primary" />
+            <span className="text-sm">
+              {data.totalCapacity} kW Solar Power Plant — {data.moduleType}
+            </span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
