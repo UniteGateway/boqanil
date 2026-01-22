@@ -23,6 +23,7 @@ import {
   Sun,
 } from "lucide-react";
 import { BOQData, SystemSplit, Inverter, defaultBOQData } from "@/types/boq";
+import { TemplateSelector } from "@/components/TemplateSelector";
 
 interface BOQFormProps {
   onSubmit: (data: BOQData) => void;
@@ -87,6 +88,13 @@ export const BOQForm = ({ onSubmit }: BOQFormProps) => {
     }));
   };
 
+  const loadTemplate = (templateData: Partial<BOQData>) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...templateData,
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
@@ -114,6 +122,13 @@ export const BOQForm = ({ onSubmit }: BOQFormProps) => {
           </div>
         </div>
       </header>
+
+      {/* Template Selector */}
+      <div className="container max-w-4xl mx-auto px-6 pt-6">
+        <div className="bg-card rounded-xl card-elevated p-4 animate-fade-in">
+          <TemplateSelector currentData={formData} onLoadTemplate={loadTemplate} />
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="container max-w-4xl mx-auto px-6 py-10 space-y-8">
         {/* Client Information */}
